@@ -4,7 +4,7 @@ I’m interested in Machine Learning and DSA
 
 I’m looking to collaborate on ML/DL/AI projects
 
-Discord : desn_udesn#6971
+Discord : Zerodoxxx#6971
 
 LinkedIn : https://www.linkedin.com/in/nehul-bhatnagar-430a17196/
 
