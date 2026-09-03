@@ -7,7 +7,7 @@
 <p align="center">
   <b>Machine Learning Engineer II</b> building production-grade LLM systems, agentic architectures, and distributed data pipelines.
   <br />
-  Currently leading enterprise RAG & multi-agent workflow systems at <b>Revionics</b>.
+  Currently leading enterprise RAG & multi-agent workflow systems at <b>Revionics</b>, previously at <b>Coinbase</b>, <b>Goldman Sachs</b>.
 </p>
 
 <p align="center">
@@ -107,7 +107,7 @@
 <table>
   <tr>
     <td width="50%" valign="top">
-      <h4><a href="https://github.com/zerodoxxx/Quorum">Quorum</a></h4>
+      <h4><a href="https://github.com/zerodoxxx/Quorum">Quorum</a> <img src="https://img.shields.io/badge/Private-grey?style=flat-square" alt="Private" /></h4>
       <p>Multi-LLM parallel consensus engine that routes prompts across multiple LLMs concurrently and synthesizes a weighted, consolidated response with unity scores and contradiction analysis.</p>
       <p><code>Python</code> <code>Multi-LLM</code> <code>Consensus Engine</code> <code>Async</code></p>
     </td>
