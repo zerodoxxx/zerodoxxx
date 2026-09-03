@@ -2,7 +2,7 @@
 
 # Hi, I'm Nehul Bhatnagar 👋
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=58A6FF&center=true&vCenter=true&width=650&lines=Machine+Learning+Engineer+II+%40+Revionics+(Goldman+Sachs);Architecting+Multi-Agent+Systems+%26+Enterprise+RAG;Scaling+Distributed+Pipelines+%26+Production+APIs;Co-Author%3A+SocialPulse+(ICWSM+2026))](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1200&color=58A6FF&center=true&vCenter=true&width=650&lines=Machine+Learning+Engineer+II+%40+Revionics+(Goldman+Sachs);Architecting+Multi-Agent+Systems+%26+Enterprise+RAG;Scaling+Distributed+Pipelines+%26+Production+APIs;Co-Author%3A+SocialPulse+(ICWSM+2026))](https://github.com/DenverCoder1/readme-typing-svg)
 
 <p align="center">
   <b>Machine Learning Engineer II</b> building production-grade LLM systems, agentic architectures, and distributed data pipelines.
@@ -13,7 +13,7 @@
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/nehulbhatnagar)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/zerodoxxx)
 [![Email](https://img.shields.io/badge/Email-nbhatnagar3010%40gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:nbhatnagar3010@gmail.com)
-[![Research](https://img.shields.io/badge/ICWSM'26-Research_Paper-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org)
+[![Research](https://img.shields.io/badge/ICWSM'26-Research_Paper-B31B1B?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2602.07248)
 
 </div>
 
@@ -31,7 +31,7 @@
 
 ### 🔬 Publications & Research
 
-- **[SocialPulse: An Open-Source Subreddit Sensemaking Toolkit](https://arxiv.org)**  
+- **[SocialPulse: An Open-Source Subreddit Sensemaking Toolkit](https://arxiv.org/abs/2602.07248)**  
   *ICWSM 2026 / arXiv* — Co-Author & Core ML Contributor  
   Developed NLP and Generative AI modules to extract structured community intelligence and topic analytics from unstructured web-scale discussion datasets.
 
@@ -58,7 +58,7 @@
       <img src="https://img.shields.io/badge/Scikit--Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white" alt="Scikit-Learn" />
       <img src="https://img.shields.io/badge/RAG_Systems-58A6FF?style=flat-square" alt="RAG Systems" />
       <img src="https://img.shields.io/badge/Multi--Agent_Systems-8B5CF6?style=flat-square" alt="Multi-Agent Systems" />
-      <img src="https://img.shields.io/badge/Vector_DBs_(FAISS_|_Pinecone)-06B6D4?style=flat-square" alt="Vector DBs" />
+      <img src="https://img.shields.io/badge/Vector_DBs_(FAISS_%7C_Pinecone)-06B6D4?style=flat-square" alt="Vector DBs" />
       <img src="https://img.shields.io/badge/BERTopic-10B981?style=flat-square" alt="BERTopic" />
     </td>
   </tr>
@@ -93,26 +93,26 @@
 <table>
   <tr>
     <td width="50%" valign="top">
-      <h4><a href="https://github.com/zerodoxxx/Quorum">Quorum</a></h4>
-      <p>Multi-LLM parallel consensus engine that routes prompts across multiple LLMs concurrently and synthesizes a weighted, consolidated response with unity scores and contradiction analysis.</p>
-      <p><code>Python</code> <code>Multi-LLM</code> <code>Consensus Engine</code> <code>Async</code></p>
+      <h4><a href="https://arxiv.org/abs/2602.07248">SocialPulse (ICWSM '26)</a></h4>
+      <p>Open-source subreddit sensemaking toolkit combining NLP and GenAI modules to extract structured community intelligence from large-scale social datasets.</p>
+      <p><code>Python</code> <code>NLP</code> <code>GenAI</code> <code>Research</code></p>
     </td>
-    <td width="50%" valign="top">
-      <h4><a href="https://github.com/zerodoxxx/clued">clued</a></h4>
-      <p>Screen-aware AI assistant for macOS. Captures screen context and system audio via global hotkeys, streaming to multimodal LLMs for instant contextual assistance in a translucent overlay.</p>
-      <p><code>Python</code> <code>macOS</code> <code>Multimodal LLM</code> <code>Real-Time</code></p>
-    </td>
-  </tr>
-  <tr>
     <td width="50%" valign="top">
       <h4><a href="https://github.com/zerodoxxx/my-own-claude-code">my-own-claude-code</a></h4>
       <p>An autonomous agentic coding assistant engine implemented from scratch, exploring tool-use loops, task orchestration, and context management.</p>
       <p><code>Python</code> <code>Autonomous Agents</code> <code>Tool Use</code> <code>CLI</code></p>
     </td>
+  </tr>
+  <tr>
     <td width="50%" valign="top">
       <h4><a href="https://github.com/zerodoxxx/my-own-redis">my-own-redis</a> & <a href="https://github.com/zerodoxxx/my-own-git">my-own-git</a></h4>
       <p>First-principles systems engineering: custom in-memory key-value database implementing the RESP protocol, and low-level Git plumbing implementation.</p>
       <p><code>Python</code> <code>Systems Programming</code> <code>Protocols</code> <code>Storage</code></p>
+    </td>
+    <td width="50%" valign="top">
+      <h4>Quorum & clued <img src="https://img.shields.io/badge/Private_Builds-grey?style=flat-square" alt="Private" /></h4>
+      <p><b>Quorum:</b> Multi-LLM consensus engine routing prompts concurrently across models with contradiction scoring.<br /><b>clued:</b> Screen-aware macOS assistant with multimodal LLM overlay inference.</p>
+      <p><code>Python</code> <code>Multi-LLM</code> <code>macOS</code> <code>Multimodal</code></p>
     </td>
   </tr>
 </table>
@@ -122,7 +122,11 @@
 ### 📊 GitHub Activity
 
 <div align="center">
-  <img src="https://streak-stats.demolab.com?user=zerodoxxx&theme=tokyonight&hide_border=true&background=0D1117" alt="GitHub Streak" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://streak-stats.demolab.com?user=zerodoxxx&theme=tokyonight&hide_border=true&background=0D1117">
+    <source media="(prefers-color-scheme: light)" srcset="https://streak-stats.demolab.com?user=zerodoxxx&theme=clean&hide_border=true&background=00000000">
+    <img src="https://streak-stats.demolab.com?user=zerodoxxx&theme=tokyonight&hide_border=true&background=0D1117" alt="GitHub Streak" />
+  </picture>
 </div>
 
 ---
