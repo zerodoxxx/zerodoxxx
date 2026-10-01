@@ -1,8 +1,11 @@
-## Hi, I'm Nehul
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
+  <img src="assets/banner-light.svg" width="100%" alt="Nehul Bhatnagar, ML Engineer II at Revionics, building production retrieval, multi-agent workflows, and the pipelines underneath them">
+</picture>
 
 I build LLM systems that have to hold up in production: retrieval, multi-agent workflows, and the data pipelines underneath them.
 
-ML Engineer II at **Revionics** in Bengaluru. Before that, ML at **Coinbase** and engineering at **Goldman Sachs**. Co-author of **[SocialPulse](https://arxiv.org/abs/2602.07248)** (ICWSM 2026).
+Based in Bengaluru. Co-author of **[SocialPulse](https://arxiv.org/abs/2602.07248)** (ICWSM 2026).
 
 [LinkedIn](https://linkedin.com/in/nehulbhatnagar) · [Email](mailto:nbhatnagar3010@gmail.com) · [Paper](https://arxiv.org/abs/2602.07248)
 
@@ -10,13 +13,9 @@ ML Engineer II at **Revionics** in Bengaluru. Before that, ML at **Coinbase** an
 
 ### Side projects
 
-**[ai-usage-dashboard](https://github.com/zerodoxxx/ai-usage-dashboard)**\
-A local dashboard for what my AI coding tools actually use and cost. It reads Claude Code, Codex and Antigravity session logs straight off disk (no API keys, nothing uploaded) and breaks spend down by model, session and hour, including cache hit rates and how much caching saved.\
-<sub>Python · Chart.js</sub>
+<p><a href="https://github.com/zerodoxxx/ai-usage-dashboard"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-dashboard-dark.svg"><img src="assets/card-dashboard-light.svg" width="49%" alt="ai-usage-dashboard: where my AI coding tokens and dollars go, reading Claude Code, Codex, and Antigravity logs locally"></picture></a><a href="https://github.com/zerodoxxx/Quorum"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-quorum-dark.svg"><img src="assets/card-quorum-light.svg" width="49%" alt="Quorum (private repo): sends one prompt to five LLMs, scores how much they agree, flags contradictions, and writes one answer. A personal tool used only by me and my friends"></picture></a></p>
 
-**[Quorum](https://github.com/zerodoxxx/Quorum)** · 🔒 private repo\
-One prompt, sent to several LLMs at once. Quorum compares their answers, scores how much they agree, pulls out the specific claims where they contradict each other, and writes one consolidated response. It's a personal tool that only my friends and I use, so the repo stays private.\
-<sub>Python · FastAPI · LangGraph · OpenRouter</sub>
+Quorum is a 🔒 private repo: a personal tool only my friends and I use.
 
 **[my-own-claude-code](https://github.com/zerodoxxx/my-own-claude-code)**\
 Building a coding agent from scratch through the CodeCrafters challenge: the agent loop, tool calling, and file and shell tools.\
@@ -25,6 +24,11 @@ Building a coding agent from scratch through the CodeCrafters challenge: the age
 &nbsp;
 
 ### Work
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/impact-dark.svg">
+  <img src="assets/impact-light.svg" width="100%" alt="Career impact: 70 percent faster ticket resolution in enterprise RAG; over $100,000 in annual compute saved; over $2 million in new European revenue; Kafka pipeline runtime reduced from 14 hours to under 2 hours">
+</picture>
 
 **Revionics** · ML Engineer II · 2023 to now
 - Built an enterprise RAG system over internal help docs and client documents. Ticket resolution time dropped 70%+.
