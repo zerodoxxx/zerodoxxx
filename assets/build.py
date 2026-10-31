@@ -33,6 +33,9 @@ THEMES = {
 }
 SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif'
 MONO = 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace'
+SERIF = '"Iowan Old Style", "Charter", "Palatino Linotype", Palatino, Georgia, serif'
+EASE = "cubic-bezier(.2,.8,.2,1)"
+MONO_CHAR = 0.6  # Monospace advance width in em, used to size pills around their labels.
 
 
 def esc(value: object) -> str:
@@ -43,7 +46,8 @@ def common_css(theme: dict[str, str]) -> str:
     token_css = ":root{" + ";".join(f"--{key}:{value}" for key, value in theme.items()) + "}"
     return (
         token_css
-        + f".sans{{font-family:{SANS}}}.mono{{font-family:{MONO}}}"
+        + f".sans{{font-family:{SANS}}}.mono{{font-family:{MONO}}}.serif{{font-family:{SERIF}}}"
+        + ".tracked{letter-spacing:.08em}"
         + ".text{fill:var(--text)}.muted{fill:var(--muted)}.accent{fill:var(--accent)}"
         + ".teal{fill:var(--teal)}.violet{fill:var(--violet)}.red{fill:var(--red)}"
         + ".panel{fill:var(--bg);stroke:var(--border);stroke-width:1.2}"
@@ -63,103 +67,52 @@ def svg_doc(title: str, width: int, height: int, theme: dict[str, str], defs: st
     )
 
 
+def corner_ticks(width: int, height: int, inset: int = 14, arm: int = 10) -> str:
+    """Four L-shaped registration marks, like the corners of an engineering drawing."""
+    a, b = inset, inset + arm
+    r, btm = width - inset, height - inset
+    d = (
+        f"M {a} {b} V {a} H {b} "
+        f"M {r - arm} {a} H {r} V {b} "
+        f"M {r} {btm - arm} V {btm} H {r - arm} "
+        f"M {b} {btm} H {a} V {btm - arm}"
+    )
+    return f'<path d="{d}" fill="none" stroke="var(--muted)" stroke-width="1" opacity=".5"/>'
+
+
 def banner(theme: dict[str, str]) -> str:
-    phrases = [
-        "retrieval that holds up in prod",
-        "multi-agent workflows",
-        "the pipelines underneath them",
-    ]
-    char_width = 19 * 0.6
-    prefix_x = 56 + 11 * char_width
-    total_seconds = 10.5
-    slots = [(0.0, 1 / 3), (1 / 3, 2 / 3), (2 / 3, 1.0)]
-    typing_css = [
-        "@keyframes cursorBlink{0%,49%{opacity:1}50%,100%{opacity:0}}",
-        ".cursor{fill:var(--accent);visibility:hidden}",
-    ]
-    typing_body = [
-        f'<text class="mono accent" x="56" y="239" font-size="19">&gt; building </text>'
-    ]
-    for idx, phrase in enumerate(phrases):
-        chars = len(phrase)
-        width = chars * char_width
-        slot_start, slot_end = slots[idx]
-        slot_span = slot_end - slot_start
-        type_end = slot_start + slot_span * 0.45
-        hold_end = slot_start + slot_span * 0.94
-        # The final 6% of each slot clears the phrase and returns the cursor.
-        pct = lambda val: f"{val * 100:.3f}%"
-        typing_css.append(
-            f"@keyframes type{idx}{{"
-            f"{pct(slot_start)}{{width:0}}{pct(type_end)}{{width:{width:.2f}px}}"
-            f"{pct(hold_end)}{{width:{width:.2f}px}}{pct(slot_end)}{{width:0}}"
-            f"100%{{width:0}}}}"
-        )
-        typing_css.append(
-            f"@keyframes cursorMove{idx}{{"
-            f"{pct(slot_start)}{{transform:translateX(0)}}"
-            f"{pct(type_end)}{{transform:translateX({width:.2f}px)}}"
-            f"{pct(hold_end)}{{transform:translateX({width:.2f}px)}}"
-            f"{pct(slot_end)}{{transform:translateX(0)}}100%{{transform:translateX(0)}}}}"
-        )
-        typing_css.append(
-            f"@keyframes cursorPhase{idx}{{0%{{visibility:hidden}}"
-            f"{pct(slot_start)}{{visibility:visible}}{pct(slot_end)}{{visibility:hidden}}"
-            "100%{visibility:hidden}}"
-        )
-        typing_body.append(
-            f'<clipPath id="phraseClip{idx}"><rect class="phraseMask phraseMask{idx}" '
-            f'x="{prefix_x:.2f}" y="214" width="0" height="31"/></clipPath>'
-        )
-        typing_body.append(
-            f'<text class="mono text phrase phrase{idx}" x="{prefix_x:.2f}" y="239" '
-            f'font-size="19" clip-path="url(#phraseClip{idx})">{esc(phrase)}</text>'
-        )
-        cursor_x = prefix_x
-        cursor_y = 220
-        typing_body.append(
-            f'<rect class="cursor cursor{idx}" x="{cursor_x:.2f}" y="{cursor_y}" '
-            f'width="10" height="21"/>'
-        )
-        typing_css.append(
-            f".phraseMask{idx}{{animation:type{idx} {total_seconds:g}s steps({chars},end) infinite}}"
-            f".cursor{idx}{{animation:cursorBlink 1s steps(2,end) infinite,"
-            f"cursorMove{idx} {total_seconds:g}s steps({chars},end) infinite,"
-            f"cursorPhase{idx} {total_seconds:g}s steps(1,end) infinite}}"
-        )
-    typing_css.append(
+    css = [
+        "@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}",
+        f".rise{{animation:rise .6s {EASE} both}}",
         "@keyframes fanFlow{"
         "0%{stroke-dashoffset:220;opacity:0}5%{opacity:0}9%{stroke-dashoffset:170;opacity:1}"
         "28%{stroke-dashoffset:0;opacity:1}35%{stroke-dashoffset:0;opacity:0}"
         "42%{stroke-dashoffset:220;opacity:0}47%{stroke-dashoffset:170;opacity:1}"
         "66%{stroke-dashoffset:0;opacity:1}73%{stroke-dashoffset:0;opacity:0}"
-        "100%{stroke-dashoffset:220;opacity:0}}"
-        ".edge{fill:none;stroke:var(--faint);stroke-width:1.5;stroke-linecap:round}"
+        "100%{stroke-dashoffset:220;opacity:0}}",
+        ".edge{fill:none;stroke:var(--faint);stroke-width:1.5;stroke-linecap:round}",
         ".streak{fill:none;stroke-width:2.5;stroke-dasharray:14 600;stroke-dashoffset:220;opacity:0;"
-        "stroke-linecap:round;animation:fanFlow 3.2s linear infinite}"
-        ".inbound{stroke:var(--teal)}.outbound{stroke:var(--accent)}"
+        "stroke-linecap:round;animation:fanFlow 3.2s linear infinite}",
+        ".inbound{stroke:var(--teal)}.outbound{stroke:var(--accent)}",
         ".model{fill:var(--violet);transform-box:fill-box;transform-origin:center;"
-        "animation:modelPulse 3.2s ease-in-out infinite}"
+        "animation:modelPulse 3.2s ease-in-out infinite}",
         "@keyframes modelPulse{0%,24%,65%,100%{transform:scale(1);opacity:1}"
-        "28%,33%,69%,74%{transform:scale(1.42);opacity:.72}}"
+        "28%,33%,69%,74%{transform:scale(1.42);opacity:.72}}",
         ".consensus-ring{fill:none;stroke:var(--accent);stroke-width:2;opacity:0;"
-        "transform-box:fill-box;transform-origin:center;animation:ring 3.2s ease-out infinite}"
+        "transform-box:fill-box;transform-origin:center;animation:ring 3.2s ease-out infinite}",
         "@keyframes ring{0%,56%,100%{opacity:0;transform:scale(.65)}"
-        "60%{opacity:.72;transform:scale(.8)}78%{opacity:0;transform:scale(1.8)}}"
-    )
+        "60%{opacity:.72;transform:scale(.8)}78%{opacity:0;transform:scale(1.8)}}",
+    ]
     for idx in range(5):
         delay = idx * 0.25
-        typing_css.append(
+        css.append(
             f".lane{idx}{{animation-delay:-{delay:.2f}s}}"
             f".model{idx}{{animation-delay:-{delay:.2f}s}}"
         )
-    typing_css.append(
+    css.append(
         "@media(prefers-reduced-motion:reduce){"
+        ".rise{animation:none!important;opacity:1;transform:none}"
         ".streak{display:none}.model,.consensus-ring{animation:none}.consensus-ring{display:none}"
-        ".phraseMask{animation:none!important;width:0!important}"
-        f".phraseMask0{{width:{len(phrases[0]) * char_width:.2f}px!important}}"
-        ".phrase1,.phrase2,.cursor1,.cursor2{display:none}"
-        f".cursor0{{animation:none;opacity:1;visibility:visible;transform:translateX({len(phrases[0]) * char_width:.2f}px)}}"
         "}"
     )
 
@@ -168,7 +121,7 @@ def banner(theme: dict[str, str]) -> str:
     ys = [72, 116, 160, 204, 248]
     inbound_paths = []
     outbound_paths = []
-    for idx, y in enumerate(ys):
+    for y in ys:
         p_in = f"M 810 160 C 850 160 870 {y} 917 {y}"
         p_out = f"M 931 {y} C 987 {y} 1020 160 1072 160"
         inbound_paths.append(p_in)
@@ -192,30 +145,98 @@ def banner(theme: dict[str, str]) -> str:
             '<circle cx="1094" cy="160" r="22" fill="var(--bg)" stroke="var(--accent)" stroke-width="2"/>',
             '<circle cx="1094" cy="160" r="5" fill="var(--accent)" opacity=".82"/>',
             '<text class="mono muted" x="1094" y="204" text-anchor="middle" font-size="12">consensus</text>',
+            # Caption centred on the diagram's extent (726 to 1116).
+            '<text class="mono muted" x="921" y="292" text-anchor="middle" font-size="11">'
+            "fig. 0 — one prompt, five models, one answer</text>",
         ]
     )
+    gap = "&#160;" * 3
+    left = [
+        '<text class="mono muted tracked rise" x="56" y="60" font-size="12">'
+        "BENGALURU · ML ENGINEER II, REVIONICS</text>",
+        '<text class="serif text rise" x="54" y="138" font-size="62" font-weight="600" '
+        'style="animation-delay:.08s">Nehul Bhatnagar</text>',
+        '<text class="sans muted rise" font-size="21" style="animation-delay:.16s">'
+        '<tspan x="56" y="184">Retrieval, multi-agent workflows,</tspan>'
+        '<tspan x="56" y="212">and the pipelines underneath them.</tspan></text>',
+        f'<text class="mono muted rise" x="56" y="262" font-size="13" style="animation-delay:.24s">'
+        f"prev. Coinbase · Goldman Sachs{gap}·{gap}ICWSM 2026</text>",
+    ]
     body = (
         '<rect class="panel" x="0.6" y="0.6" width="1198.8" height="318.8" rx="16"/>'
-        '<rect x="1" y="1" width="1198" height="318" rx="16" fill="url(#dots)" mask="url(#fadeMask)"/>'
-        '<text class="mono muted" x="56" y="58" font-size="15">~/zerodoxxx</text>'
-        '<text class="sans text" x="56" y="126" font-size="56" font-weight="700">Nehul Bhatnagar</text>'
-        '<text class="sans muted" x="56" y="169" font-size="22">'
-        'ML Engineer II at Revionics · ex-Coinbase, Goldman Sachs</text>'
-        + "".join(typing_body)
+        + corner_ticks(1200, 320)
+        + "".join(left)
         + "".join(diagram)
     )
-    defs = (
-        '<pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">'
-        '<circle cx="2" cy="2" r="1.2" fill="var(--faint)"/></pattern>'
-        '<linearGradient id="fade" x1="0" x2="1">'
-        '<stop offset="0%" stop-color="white" stop-opacity="0"/>'
-        '<stop offset="46%" stop-color="white" stop-opacity="0"/>'
-        '<stop offset="70%" stop-color="white" stop-opacity="1"/>'
-        '<stop offset="100%" stop-color="white" stop-opacity="1"/></linearGradient>'
-        '<mask id="fadeMask"><rect x="0" y="0" width="1200" height="320" fill="url(#fade)"/></mask>'
+    return svg_doc(
+        "Nehul Bhatnagar — ML Engineer II at Revionics, Bengaluru", 1200, 320, theme, "", "".join(css), body
     )
-    css = "".join(typing_css)
-    return svg_doc("Nehul Bhatnagar — ML Engineer", 1200, 320, theme, defs, css, body)
+
+
+TAG_COLOURS = {"early access": "accent", "open source": "teal", "private": "muted"}
+
+
+def status_tag(label: str) -> str:
+    colour = TAG_COLOURS[label]
+    lock = label == "private"
+    text_w = len(label) * 11 * MONO_CHAR
+    width = text_w + 24 + (18 if lock else 0)
+    x = 568 - width
+    parts = [
+        f'<rect x="{x:.1f}" y="20" width="{width:.1f}" height="24" rx="12" fill="none" '
+        f'stroke="var(--{colour})" stroke-width="1"/>'
+    ]
+    text_x = 568 - 12 - text_w / 2
+    if lock:
+        lx, ly = x + 12, 30
+        parts.append(
+            f'<path d="M {lx + 1} {ly} V {ly - 2} A 4 4 0 0 1 {lx + 9} {ly - 2} V {ly} '
+            f'M {lx} {ly} H {lx + 10} V {ly + 8} H {lx} Z" fill="none" stroke="var(--{colour})" '
+            'stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>'
+        )
+    parts.append(
+        f'<text class="mono {colour}" x="{text_x:.1f}" y="36" text-anchor="middle" font-size="11">{esc(label)}</text>'
+    )
+    return "".join(parts)
+
+
+CARD_CSS = (
+    "@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}"
+    f".entrance{{animation:cardIn .65s {EASE} both}}"
+    "@media(prefers-reduced-motion:reduce){.entrance{animation:none!important;opacity:1;transform:none}}"
+)
+
+
+def card(
+    theme: dict[str, str],
+    *,
+    index: str,
+    title: str,
+    tag: str,
+    lines: tuple[str, str],
+    illustration: str,
+    stack: str,
+    destination: str,
+    destination_class: str,
+    css: str = "",
+    defs: str = "",
+) -> str:
+    """Shared figure-sheet frame: index, serif title, tag, two lines, figure zone, hairline, footer."""
+    body = (
+        '<g class="entrance">'
+        '<rect class="panel" x="0.6" y="0.6" width="598.8" height="298.8" rx="16"/>'
+        f'<text class="mono muted" x="32" y="36" font-size="12">{esc(index)}</text>'
+        f'<text class="serif text" x="32" y="68" font-size="30" font-weight="600">{esc(title)}</text>'
+        + status_tag(tag)
+        + f'<text class="sans muted" x="32" y="100" font-size="16">{lines[0]}</text>'
+        f'<text class="sans muted" x="32" y="124" font-size="16">{lines[1]}</text>'
+        + illustration
+        + '<path d="M 32 258 H 568" stroke="var(--faint)" stroke-width="1"/>'
+        f'<text class="mono muted" x="32" y="283" font-size="12">{esc(stack)}</text>'
+        f'<text class="mono {destination_class}" x="568" y="283" text-anchor="end" font-size="12">{esc(destination)}</text>'
+        "</g>"
+    )
+    return svg_doc(f"{title} project card", 600, 300, theme, defs, CARD_CSS + css, body)
 
 
 def dashboard_card(theme: dict[str, str]) -> str:
@@ -224,14 +245,12 @@ def dashboard_card(theme: dict[str, str]) -> str:
     odo_defs = []
     odo_body = []
     odo_css = [
-        "@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}",
-        ".entrance{animation:cardIn .65s cubic-bezier(.2,.8,.2,1) both}",
         ".odo-strip{font-size:30px;font-weight:500;text-anchor:middle}",
         ".comma{transform-box:fill-box;transform-origin:center;transform:scaleX(.42)}",
         ".chart-bar{fill:var(--accent);transform-box:fill-box;transform-origin:50% 100%;"
-        "transform:scaleY(0);animation:grow .52s cubic-bezier(.2,.8,.2,1) both}",
+        f"transform:scaleY(0);animation:grow .52s {EASE} both}}",
         "@keyframes grow{to{transform:scaleY(1)}}",
-        "@media(prefers-reduced-motion:reduce){.entrance,.odo-strip,.chart-bar{animation:none!important;opacity:1;transform:none!important}}",
+        "@media(prefers-reduced-motion:reduce){.chart-bar{animation:none!important;transform:none!important}}",
     ]
     for idx, digit_char in enumerate(digits):
         digit = int(digit_char)
@@ -245,9 +264,10 @@ def dashboard_card(theme: dict[str, str]) -> str:
         delay = idx * 0.03
         odo_css.append(
             f".roll{idx}{{transform:translateY(0);animation:roll{idx} {anim_seconds:.3f}s "
-            f"cubic-bezier(.2,.8,.2,1) {delay:.3f}s both}}"
+            f"{EASE} {delay:.3f}s both}}"
             f"@keyframes roll{idx}{{to{{transform:translateY(-{final_row * 40}px)}}}}"
-            f"@media(prefers-reduced-motion:reduce){{.roll{idx}{{transform:translateY(-{final_row * 40}px)!important}}}}"
+            f"@media(prefers-reduced-motion:reduce){{.roll{idx}{{animation:none!important;"
+            f"transform:translateY(-{final_row * 40}px)!important}}}}"
         )
         texts = "".join(
             f'<text class="mono text odo-strip" x="{x + 11}" y="{200 + row * 40}">{value}</text>'
@@ -273,43 +293,49 @@ def dashboard_card(theme: dict[str, str]) -> str:
             f'<rect class="chart-bar" x="{x}" y="{y}" width="9" height="{height}" rx="2" '
             f'style="animation-delay:{delay:.2f}s"/>'
         )
-    body = (
-        '<g class="entrance">'
-        '<rect class="panel" x="0.6" y="0.6" width="598.8" height="298.8" rx="16"/>'
-        '<text class="sans text" x="32" y="52" font-size="28" font-weight="700">ai-usage-dashboard</text>'
-        '<rect x="480" y="28" width="88" height="25" rx="12.5" fill="none" stroke="var(--teal)" stroke-width="1.2"/>'
-        '<text class="mono teal" x="524" y="45" text-anchor="middle" font-size="12">public</text>'
-        '<text class="sans muted" x="32" y="88" font-size="17">Where my AI coding tokens and dollars go.</text>'
-        '<text class="sans muted" x="32" y="112" font-size="17">Reads Claude Code, Codex &amp; Antigravity logs locally.</text>'
-        '<text class="mono muted" x="32" y="155" font-size="12">TOKENS</text>'
+    illustration = (
+        '<text class="mono muted tracked" x="32" y="158" font-size="11">TOKENS</text>'
         + "".join(odo_body)
+        + '<text class="mono muted" x="32" y="236" font-size="11">this month</text>'
         + '<path d="M 348 226 H 559" stroke="var(--faint)" stroke-width="1"/>'
         + "".join(bar_body)
-        + '<text class="mono muted" x="350" y="250" font-size="12">cache hit 91%</text>'
-        + '<text class="mono muted" x="32" y="280" font-size="13">Python · Chart.js · local-only</text>'
-        + "</g>"
+        + '<text class="mono muted" x="350" y="246" font-size="11">cache hit 91%</text>'
     )
-    defs = "".join(odo_defs)
-    return svg_doc("ai-usage-dashboard project card", 600, 300, theme, defs, "".join(odo_css), body)
+    return card(
+        theme,
+        index="04",
+        title="ai-usage-dashboard",
+        tag="open source",
+        lines=("Where my AI coding tokens and dollars go.", "Reads Claude Code, Codex &amp; Antigravity logs locally."),
+        illustration=illustration,
+        stack="Python · Chart.js · local-only",
+        destination="repo ↗",
+        destination_class="accent",
+        css="".join(odo_css),
+        defs="".join(odo_defs),
+    )
 
 
 def quorum_card(theme: dict[str, str]) -> str:
-    rows_y = [157, 179, 201, 223, 245]
+    rows_y = [154, 176, 198, 220, 242]
     starts = [22, 188, 54, 206, 78]
     ends = [160, 166, 154, 164, 158]
+    # Gauge geometry: circumference and the dash offset that leaves 0.87 of it drawn.
+    gauge_r = 38
+    circumference = 2 * 3.14159265 * gauge_r
+    gauge_end = circumference * 0.13
     row_parts = []
     css = [
-        "@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}",
-        ".entrance{animation:cardIn .65s cubic-bezier(.2,.8,.2,1) both}",
-        ".bar-fill{fill:var(--violet);animation:converge 1.6s cubic-bezier(.2,.8,.2,1) both}",
+        f".bar-fill{{fill:var(--violet);animation:converge 1.6s {EASE} both}}",
         "@keyframes converge{from{width:var(--from)}to{width:var(--to)}}",
         ".contradiction{opacity:0;animation:showContradiction .3s ease-out 1.72s both}",
         "@keyframes showContradiction{from{opacity:0}to{opacity:1}}",
         ".gauge-fill{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;"
-        "stroke-dasharray:263.89;stroke-dashoffset:263.89;animation:gauge .9s cubic-bezier(.2,.8,.2,1) .45s both}",
-        "@keyframes gauge{to{stroke-dashoffset:34.31}}",
-        "@media(prefers-reduced-motion:reduce){.entrance,.bar-fill,.contradiction,.gauge-fill{animation:none!important;opacity:1}"
-        ".bar-fill{width:var(--to)!important}.gauge-fill{stroke-dashoffset:34.31!important}}",
+        f"stroke-dasharray:{circumference:.2f};stroke-dashoffset:{circumference:.2f};"
+        f"animation:gauge .7s {EASE} .45s both}}",
+        f"@keyframes gauge{{to{{stroke-dashoffset:{gauge_end:.2f}}}}}",
+        "@media(prefers-reduced-motion:reduce){.bar-fill,.contradiction,.gauge-fill{animation:none!important;opacity:1}"
+        f".bar-fill{{width:var(--to)!important}}.gauge-fill{{stroke-dashoffset:{gauge_end:.2f}!important}}}}",
     ]
     for idx, (y, start, end) in enumerate(zip(rows_y, starts, ends)):
         row_parts.append(
@@ -318,27 +344,27 @@ def quorum_card(theme: dict[str, str]) -> str:
             f'<rect class="bar-fill bar{idx}" x="64" y="{y - 5}" width="{start}" height="8" rx="4" '
             f'style="--from:{start}px;--to:{end}px;animation-delay:{idx * 0.07:.2f}s"/>'
         )
-    body = (
-        '<g class="entrance">'
-        '<rect class="panel" x="0.6" y="0.6" width="598.8" height="298.8" rx="16"/>'
-        '<text class="sans text" x="32" y="52" font-size="28" font-weight="700">Quorum</text>'
-        '<rect x="474" y="28" width="94" height="25" rx="12.5" fill="none" stroke="var(--accent)" stroke-width="1.2"/>'
-        '<path d="M 488 39 V 37 A 4 4 0 0 1 496 37 V 39 M 487 39 H 497 V 47 H 487 Z" '
-        'fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>'
-        '<text class="mono accent" x="531" y="45" text-anchor="middle" font-size="12">private</text>'
-        '<text class="sans muted" x="32" y="88" font-size="17">One prompt, five models, one answer.</text>'
-        '<text class="sans muted" x="32" y="112" font-size="17">A private tool, built just for me and my friends.</text>'
-        + "".join(row_parts)
-        + '<g class="contradiction"><circle cx="279" cy="222" r="3" fill="var(--red)"/>'
-        '<text class="mono red" x="287" y="226" font-size="11">contradiction</text></g>'
-        + '<circle cx="493" cy="205" r="42" fill="none" stroke="var(--faint)" stroke-width="8"/>'
-        + '<circle class="gauge-fill" cx="493" cy="205" r="42" transform="rotate(-90 493 205)"/>'
-        + '<text class="mono text" x="493" y="213" text-anchor="middle" font-size="26">0.87</text>'
-        + '<text class="mono muted" x="493" y="264" text-anchor="middle" font-size="12">unity score</text>'
-        + '<text class="mono muted" x="32" y="280" font-size="13">Python · FastAPI · LangGraph</text>'
-        + "</g>"
+    illustration = (
+        "".join(row_parts)
+        + '<g class="contradiction"><circle cx="279" cy="219" r="3" fill="var(--red)"/>'
+        '<text class="mono red" x="287" y="223" font-size="11">contradiction</text></g>'
+        + f'<circle cx="493" cy="188" r="{gauge_r}" fill="none" stroke="var(--faint)" stroke-width="8"/>'
+        + f'<circle class="gauge-fill" cx="493" cy="188" r="{gauge_r}" transform="rotate(-90 493 188)"/>'
+        + '<text class="mono text" x="493" y="196" text-anchor="middle" font-size="24">0.87</text>'
+        + '<text class="mono muted" x="493" y="246" text-anchor="middle" font-size="11">unity score</text>'
     )
-    return svg_doc("Quorum project card", 600, 300, theme, "", "".join(css), body)
+    return card(
+        theme,
+        index="03",
+        title="Quorum",
+        tag="private",
+        lines=("One prompt, five models, one answer.", "A private tool, built just for me and my friends."),
+        illustration=illustration,
+        stack="Python · FastAPI · LangGraph",
+        destination="friends only",
+        destination_class="muted",
+        css="".join(css),
+    )
 
 
 def focusnotes_card(theme: dict[str, str]) -> str:
@@ -351,112 +377,145 @@ def focusnotes_card(theme: dict[str, str]) -> str:
         for y, width in screen_bars
     )
     css = [
-        "@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}",
-        ".entrance{animation:cardIn .65s cubic-bezier(.2,.8,.2,1) both}",
         f".select-box{{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:{select_length};"
-        "animation:drawSelect 1.1s cubic-bezier(.2,.8,.2,1) .4s both}",
+        f"animation:drawSelect .7s {EASE} .4s both}}",
         f"@keyframes drawSelect{{from{{stroke-dashoffset:{select_length}}}to{{stroke-dashoffset:0}}}}",
         ".note-line{animation:noteIn .4s ease-out both}",
         "@keyframes noteIn{from{opacity:0}to{opacity:1}}",
-        "@media(prefers-reduced-motion:reduce){.entrance,.select-box,.note-line{animation:none!important}}",
+        "@media(prefers-reduced-motion:reduce){.select-box,.note-line{animation:none!important;opacity:1;stroke-dashoffset:0}}",
     ]
-    body = (
-        '<g class="entrance">'
-        '<rect class="panel" x="0.6" y="0.6" width="598.8" height="298.8" rx="16"/>'
-        '<text class="sans text" x="32" y="52" font-size="28" font-weight="700">focusnotes</text>'
-        '<rect x="480" y="28" width="88" height="25" rx="12.5" fill="none" stroke="var(--teal)" stroke-width="1.2"/>'
-        '<text class="mono teal" x="524" y="45" text-anchor="middle" font-size="12">public</text>'
-        '<text class="sans muted" x="32" y="88" font-size="17">Take notes without breaking focus.</text>'
-        '<text class="sans muted" x="32" y="112" font-size="17">Selected text, screen areas &amp; quick notes → Markdown.</text>'
-        + bar_parts
+    illustration = (
+        bar_parts
         + f'<rect class="select-box" x="{select_x}" y="{select_y}" width="{select_w}" height="{select_h}" rx="6"/>'
-        '<path d="M 258 194 L 266 200 L 258 206" fill="none" stroke="var(--muted)" stroke-width="1.5" '
+        '<path d="M 258 189 L 266 195 L 258 201" fill="none" stroke="var(--muted)" stroke-width="1.5" '
         'stroke-linecap="round" stroke-linejoin="round"/>'
-        '<rect class="panel" x="300.5" y="140.5" width="267" height="119" rx="10"/>'
-        '<text class="mono muted note-line" x="316" y="162" font-size="12" style="animation-delay:.5s">inbox.md</text>'
-        '<text class="mono text note-line" x="316" y="190" font-size="12" style="animation-delay:1s">- selected quote</text>'
-        '<text class="mono text note-line" x="316" y="212" font-size="12" style="animation-delay:1.5s">- OCR → text</text>'
-        '<text class="mono teal note-line" x="316" y="234" font-size="12" style="animation-delay:2s">#reading</text>'
-        + '<text class="mono muted" x="32" y="280" font-size="13">Swift · C#/WPF · on-device OCR · macOS + Windows</text>'
-        + "</g>"
+        '<rect class="panel" x="300.5" y="142.5" width="267" height="104" rx="10"/>'
+        '<text class="mono muted note-line" x="316" y="164" font-size="12" style="animation-delay:.5s">inbox.md</text>'
+        '<text class="mono text note-line" x="316" y="189" font-size="12" style="animation-delay:.9s">- selected quote</text>'
+        '<text class="mono text note-line" x="316" y="210" font-size="12" style="animation-delay:1.3s">- OCR → text</text>'
+        '<text class="mono teal note-line" x="316" y="231" font-size="12" style="animation-delay:1.7s">#reading</text>'
     )
-    return svg_doc("focusnotes project card", 600, 300, theme, "", "".join(css), body)
+    return card(
+        theme,
+        index="02",
+        title="focusnotes",
+        tag="open source",
+        lines=("Take notes without breaking focus.", "Selected text, screen areas &amp; quick notes → Markdown."),
+        illustration=illustration,
+        stack="Swift · C#/WPF · on-device OCR",
+        destination="focusnotes.pages.dev ↗",
+        destination_class="accent",
+        css="".join(css),
+    )
 
 
-def flatcart_card(theme: dict[str, str]) -> str:
-    css = [
-        "@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}",
-        ".entrance{animation:cardIn .65s cubic-bezier(.2,.8,.2,1) both}",
-        ".bar-fill{animation:fillBar 1.2s cubic-bezier(.2,.8,.2,1) both}",
-        "@keyframes fillBar{from{width:0px}to{width:var(--to)}}",
-        ".cheaper{animation:showTag .3s ease-out 1.5s both}",
-        "@keyframes showTag{from{opacity:0}to{opacity:1}}",
-        "@media(prefers-reduced-motion:reduce){.entrance,.bar-fill,.cheaper{animation:none!important}}",
+def groupbasket_card(theme: dict[str, str]) -> str:
+    # Three flatmates' WhatsApp replies merge into one cart, like lines into a transit interchange.
+    messages = [
+        ("R", "atta and coke zero", "teal", 160),
+        ("A", "ek doodh bhi mangwa lena", "violet", 195),
+        ("N", "eggs too, shared", "accent", 230),
     ]
-    # Both bars share one 360px scale so the price gap reads at its true proportion.
-    body = (
-        '<g class="entrance">'
-        '<rect class="panel" x="0.6" y="0.6" width="598.8" height="298.8" rx="16"/>'
-        '<text class="sans text" x="32" y="52" font-size="28" font-weight="700">flatcart</text>'
-        '<rect x="474" y="28" width="94" height="25" rx="12.5" fill="none" stroke="var(--accent)" stroke-width="1.2"/>'
-        '<path d="M 488 39 V 37 A 4 4 0 0 1 496 37 V 39 M 487 39 H 497 V 47 H 487 Z" '
-        'fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>'
-        '<text class="mono accent" x="531" y="45" text-anchor="middle" font-size="12">private</text>'
-        '<text class="sans muted" x="32" y="88" font-size="17">One grocery order for the whole flat.</text>'
-        '<text class="sans muted" x="32" y="112" font-size="17">Shared list, compare carts, split the bill.</text>'
-        '<text class="mono muted" x="32" y="174" font-size="12">Instamart</text>'
-        '<text class="mono text" x="392" y="174" text-anchor="end" font-size="13">₹1,284</text>'
-        '<rect x="32" y="182" width="360" height="8" rx="4" fill="var(--faint)"/>'
-        '<rect class="bar-fill violet" x="32" y="182" width="360" height="8" rx="4" style="--to:360px"/>'
-        '<text class="mono muted" x="32" y="222" font-size="12">Zepto</text>'
-        '<text class="mono text" x="392" y="222" text-anchor="end" font-size="13">₹1,197</text>'
-        '<rect x="32" y="230" width="360" height="8" rx="4" fill="var(--faint)"/>'
-        '<rect class="bar-fill teal" x="32" y="230" width="336" height="8" rx="4" '
-        'style="--to:336px;animation-delay:.15s"/>'
-        '<g class="cheaper"><rect x="78" y="209" width="58" height="18" rx="9" fill="none" stroke="var(--teal)" stroke-width="1.2"/>'
-        '<text class="mono teal" x="107" y="222" text-anchor="middle" font-size="11">cheaper</text></g>'
-        '<text class="mono muted" x="420" y="180" font-size="13">÷ 4</text>'
-        '<text class="mono text" x="420" y="214" font-size="24">₹299 each</text>'
-        '<text class="mono muted" x="420" y="236" font-size="12">split</text>'
-        '<text class="mono muted" x="32" y="280" font-size="13">TypeScript · Cloudflare Workers · Durable Objects</text>'
-        "</g>"
+    cart_x, cart_y, cart_w, cart_h = 296, 181, 134, 28
+    cart_cy = cart_y + cart_h / 2
+    css = [
+        "@keyframes pop{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}",
+        f".pop{{animation:pop .45s {EASE} both}}",
+        ".route{fill:none;stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;"
+        f"animation:drawRoute .6s {EASE} both}}",
+        "@keyframes drawRoute{to{stroke-dashoffset:0}}",
+        ".r-teal{stroke:var(--teal)}.r-violet{stroke:var(--violet)}.r-accent{stroke:var(--accent)}",
+        ".bubble{fill:none;stroke:var(--border);stroke-width:1}",
+        "@media(prefers-reduced-motion:reduce){.pop,.route{animation:none!important;opacity:1;transform:none;stroke-dashoffset:0}}",
+    ]
+    parts = []
+    routes = []
+    for idx, (initial, text, colour, cy) in enumerate(messages):
+        delay = 0.35 + idx * 0.3
+        bubble_w = round(len(text) * 6.4 + 22)
+        bx = 62
+        end_x = bx + bubble_w
+        parts.append(
+            f'<g class="pop" style="animation-delay:{delay:.2f}s">'
+            f'<circle cx="44" cy="{cy}" r="10" fill="none" stroke="var(--{colour})" stroke-width="1.2"/>'
+            f'<text class="mono {colour}" x="44" y="{cy + 4}" text-anchor="middle" font-size="11" font-weight="600">{initial}</text>'
+            f'<rect class="bubble" x="{bx}.5" y="{cy - 12}.5" width="{bubble_w}" height="24" rx="9"/>'
+            f'<text class="sans text" x="{bx + 11}" y="{cy + 4}" font-size="12">{esc(text)}</text>'
+            "</g>"
+        )
+        route_delay = 1.3 + idx * 0.12
+        routes.append(
+            f'<path class="route r-{colour}" pathLength="1" style="animation-delay:{route_delay:.2f}s" '
+            f'd="M {end_x + 6} {cy} C {end_x + 40} {cy} {cart_x - 40} {cart_cy} {cart_x} {cart_cy}"/>'
+            f'<circle class="pop" cx="{end_x + 6}" cy="{cy}" r="2.5" fill="var(--{colour})" '
+            f'style="animation-delay:{route_delay:.2f}s"/>'
+        )
+    right_x = 450
+    right = (
+        # Branches out of the cart: the losing quote in a hairline, the winner in teal.
+        f'<path class="route" pathLength="1" style="stroke:var(--border);stroke-width:1.5;animation-delay:2s" '
+        f'd="M {cart_x + cart_w} {cart_cy} C {cart_x + cart_w + 12} {cart_cy} {right_x - 16} 167 {right_x - 6} 167"/>'
+        f'<path class="route r-teal" pathLength="1" style="animation-delay:2s" '
+        f'd="M {cart_x + cart_w} {cart_cy} H {right_x - 6}"/>'
+        f'<text class="mono muted pop" x="{right_x}" y="171" font-size="12" style="animation-delay:2.2s">Instamart ₹471</text>'
+        f'<text class="mono text pop" x="{right_x}" y="199" font-size="12" style="animation-delay:2.35s">'
+        'Zepto ₹438 <tspan class="teal">✓</tspan></text>'
+        f'<text class="mono muted pop" x="{right_x}" y="231" font-size="11" style="animation-delay:2.5s">split → Splitwise</text>'
     )
-    return svg_doc("flatcart project card", 600, 300, theme, "", "".join(css), body)
+    cart = (
+        f'<g class="pop" style="animation-delay:1.2s">'
+        f'<rect x="{cart_x}.5" y="{cart_y}.5" width="{cart_w}" height="{cart_h}" rx="14" fill="var(--bg)" '
+        'stroke="var(--muted)" stroke-width="1.2"/>'
+        f'<text class="mono text" x="{cart_x + cart_w / 2:.1f}" y="{cart_cy + 4:.1f}" text-anchor="middle" font-size="12">'
+        "1 cart · 4 items</text></g>"
+    )
+    illustration = "".join(routes) + "".join(parts) + cart + right
+    return card(
+        theme,
+        index="01",
+        title="GroupBasket",
+        tag="early access",
+        lines=(
+            "One grocery order for the whole flat.",
+            "Asks everyone on WhatsApp, compares carts, splits on Splitwise.",
+        ),
+        illustration=illustration,
+        stack="TypeScript · Cloudflare Workers",
+        destination="groupbasket.in ↗",
+        destination_class="accent",
+        css="".join(css),
+    )
 
 
 def impact_strip(theme: dict[str, str]) -> str:
     tiles = [
-        ("70%+", "faster ticket resolution", "enterprise RAG", 94),
-        ("$100k+", "compute saved per year", "inference API on k8s", 132),
-        ("$2M+", "new European revenue", "forecasting libraries", 94),
-        ("14h → &lt;2h", "Kafka pipeline runtime", "Goldman Sachs", 190),
+        ("ENTERPRISE RAG", "70%+", "faster ticket resolution"),
+        ("INFERENCE API ON K8S", "$100k+", "compute saved per year"),
+        ("FORECASTING", "$2M+", "new European revenue"),
+        ("GOLDMAN SACHS", "14h → &lt;2h", "Kafka pipeline runtime"),
     ]
     css = [
         "@keyframes tileIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}",
-        ".tile{opacity:0;animation:tileIn .62s cubic-bezier(.2,.8,.2,1) both}",
-        ".underline{stroke:var(--accent);stroke-width:2;stroke-dasharray:240;stroke-dashoffset:240;"
-        "animation:draw .48s ease-out both}",
-        "@keyframes draw{to{stroke-dashoffset:0}}",
-        "@media(prefers-reduced-motion:reduce){.tile,.underline{animation:none!important;opacity:1;transform:none;stroke-dashoffset:0}}",
+        f".tile{{animation:tileIn .62s {EASE} both}}",
+        "@media(prefers-reduced-motion:reduce){.tile{animation:none!important;opacity:1;transform:none}}",
     ]
     pieces = [
-        '<rect class="panel" x="0.6" y="0.6" width="1198.8" height="148.8" rx="16"/>'
+        '<rect class="panel" x="0.6" y="0.6" width="1198.8" height="148.8" rx="16"/>',
+        corner_ticks(1200, 150),
     ]
     for idx in range(1, 4):
-        pieces.append(f'<path d="M {idx * 300} 20 V 130" stroke="var(--faint)" stroke-width="1"/>')
-    for idx, (number, label, context, underline_len) in enumerate(tiles):
+        pieces.append(f'<path d="M {idx * 300} 24 V 126" stroke="var(--faint)" stroke-width="1"/>')
+    for idx, (context, number, label) in enumerate(tiles):
         center = idx * 300 + 150
         delay = idx * 0.15
         pieces.append(
-            f'<g class="tile tile{idx}" style="animation-delay:{delay:.2f}s">'
-            f'<text class="sans accent" x="{center}" y="53" text-anchor="middle" font-size="38" font-weight="700">{number}</text>'
-            f'<path class="underline" d="M {center - underline_len / 2:.1f} 66 H {center + underline_len / 2:.1f}" '
-            f'style="animation-delay:{delay + 0.25:.2f}s"/>'
-            f'<text class="sans text" x="{center}" y="98" text-anchor="middle" font-size="16">{esc(label)}</text>'
-            f'<text class="mono muted" x="{center}" y="124" text-anchor="middle" font-size="12">{esc(context)}</text>'
-            '</g>'
+            f'<g class="tile" style="animation-delay:{delay:.2f}s">'
+            f'<text class="mono muted tracked" x="{center}" y="42" text-anchor="middle" font-size="11">{esc(context)}</text>'
+            f'<text class="serif accent" x="{center}" y="88" text-anchor="middle" font-size="40" font-weight="600">{number}</text>'
+            f'<text class="sans text" x="{center}" y="118" text-anchor="middle" font-size="15">{esc(label)}</text>'
+            "</g>"
         )
-    return svg_doc("Career impact stats", 1200, 150, theme, "", "".join(css), "".join(pieces))
+    return svg_doc("Career impact results", 1200, 150, theme, "", "".join(css), "".join(pieces))
 
 
 def write(name: str, value: str) -> None:
@@ -466,10 +525,10 @@ def write(name: str, value: str) -> None:
 def main() -> None:
     builders = {
         "banner": banner,
+        "card-groupbasket": groupbasket_card,
         "card-focusnotes": focusnotes_card,
-        "card-flatcart": flatcart_card,
-        "card-dashboard": dashboard_card,
         "card-quorum": quorum_card,
+        "card-dashboard": dashboard_card,
         "impact": impact_strip,
     }
     for theme_name, theme in THEMES.items():

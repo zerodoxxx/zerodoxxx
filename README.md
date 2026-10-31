@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-  <img src="assets/banner-light.svg" width="100%" alt="Nehul Bhatnagar, ML Engineer II at Revionics, building production retrieval, multi-agent workflows, and the pipelines underneath them">
+  <img src="assets/banner-light.svg" width="100%" alt="Nehul Bhatnagar, ML Engineer II at Revionics in Bengaluru: retrieval, multi-agent workflows, and the pipelines underneath them. Previously Coinbase and Goldman Sachs; ICWSM 2026. A figure shows one prompt fanning out to five models and converging on one answer">
 </picture>
 
 I build LLM systems that have to hold up in production: retrieval, multi-agent workflows, and the data pipelines underneath them.
@@ -9,15 +9,15 @@ Based in Bengaluru. Co-author of **[SocialPulse](https://arxiv.org/abs/2602.0724
 
 [LinkedIn](https://linkedin.com/in/nehulbhatnagar) · [Email](mailto:nbhatnagar3010@gmail.com) · [Paper](https://arxiv.org/abs/2602.07248)
 
+**Now:** GroupBasket is in early access at [groupbasket.in](https://groupbasket.in).
+
 &nbsp;
 
-### Side projects
+### Built after hours
 
-<p><a href="https://github.com/zerodoxxx/focusnotes"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-focusnotes-dark.svg"><img src="assets/card-focusnotes-light.svg" width="49%" alt="focusnotes: menu-bar and tray app for macOS and Windows that captures selected text, screen areas and quick notes into plain Markdown, with on-device OCR and search"></picture></a><a href="https://github.com/zerodoxxx/ai-usage-dashboard"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-dashboard-dark.svg"><img src="assets/card-dashboard-light.svg" width="49%" alt="ai-usage-dashboard: where my AI coding tokens and dollars go, reading Claude Code, Codex, and Antigravity logs locally"></picture></a></p>
+<p><a href="https://groupbasket.in"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-groupbasket-dark.svg"><img src="assets/card-groupbasket-light.svg" width="49%" alt="GroupBasket: one grocery order for the whole flat. Asks flatmates on WhatsApp, compares Instamart and Zepto carts, and posts the split to Splitwise. In early access at groupbasket.in"></picture></a><a href="https://focusnotes.pages.dev"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-focusnotes-dark.svg"><img src="assets/card-focusnotes-light.svg" width="49%" alt="focusnotes (open source): take notes without breaking focus. Captures selected text, screen areas and quick notes into Markdown on macOS and Windows, with on-device OCR. Site at focusnotes.pages.dev"></picture></a></p>
 
-<p><a href="https://github.com/zerodoxxx/Quorum"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-quorum-dark.svg"><img src="assets/card-quorum-light.svg" width="49%" alt="Quorum (private repo): sends one prompt to five LLMs, scores how much they agree, flags contradictions, and writes one answer. A personal tool used only by me and my friends"></picture></a><a href="https://github.com/zerodoxxx/flatcart"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-flatcart-dark.svg"><img src="assets/card-flatcart-light.svg" width="49%" alt="flatcart (private repo): flatmates share one grocery list, compare carts across Instamart and Zepto, and split the bill. A working prototype with mock grocery providers"></picture></a></p>
-
-Quorum and flatcart are 🔒 private repos. Quorum is a personal tool only my friends and I use; flatcart is a working prototype with mock grocery providers.
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-quorum-dark.svg"><img src="assets/card-quorum-light.svg" width="49%" alt="Quorum (private): one prompt, five models, one answer. Scores how much the models agree, flags contradictions, and writes one answer. A private tool for me and my friends"></picture><a href="https://github.com/zerodoxxx/ai-usage-dashboard"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/card-dashboard-dark.svg"><img src="assets/card-dashboard-light.svg" width="49%" alt="ai-usage-dashboard (open source): where my AI coding tokens and dollars go, reading Claude Code, Codex and Antigravity logs locally"></picture></a></p>
 
 **[my-own-claude-code](https://github.com/zerodoxxx/my-own-claude-code)**\
 Building a coding agent from scratch through the CodeCrafters challenge: the agent loop, tool calling, and file and shell tools.\
