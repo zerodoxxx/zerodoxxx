@@ -341,6 +341,89 @@ def quorum_card(theme: dict[str, str]) -> str:
     return svg_doc("Quorum project card", 600, 300, theme, "", "".join(css), body)
 
 
+def focusnotes_card(theme: dict[str, str]) -> str:
+    select_x, select_y, select_w, select_h = 25, 163, 200, 44
+    # The dash length must cover the full perimeter so the outline draws on without a gap.
+    select_length = 2 * (select_w + select_h)
+    screen_bars = [(150, 168), (170, 186), (190, 140), (210, 176), (230, 112)]
+    bar_parts = "".join(
+        f'<rect x="32" y="{y}" width="{width}" height="10" rx="5" fill="var(--faint)"/>'
+        for y, width in screen_bars
+    )
+    css = [
+        "@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}",
+        ".entrance{animation:cardIn .65s cubic-bezier(.2,.8,.2,1) both}",
+        f".select-box{{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:{select_length};"
+        "animation:drawSelect 1.1s cubic-bezier(.2,.8,.2,1) .4s both}",
+        f"@keyframes drawSelect{{from{{stroke-dashoffset:{select_length}}}to{{stroke-dashoffset:0}}}}",
+        ".note-line{animation:noteIn .4s ease-out both}",
+        "@keyframes noteIn{from{opacity:0}to{opacity:1}}",
+        "@media(prefers-reduced-motion:reduce){.entrance,.select-box,.note-line{animation:none!important}}",
+    ]
+    body = (
+        '<g class="entrance">'
+        '<rect class="panel" x="0.6" y="0.6" width="598.8" height="298.8" rx="16"/>'
+        '<text class="sans text" x="32" y="52" font-size="28" font-weight="700">focusnotes</text>'
+        '<rect x="480" y="28" width="88" height="25" rx="12.5" fill="none" stroke="var(--teal)" stroke-width="1.2"/>'
+        '<text class="mono teal" x="524" y="45" text-anchor="middle" font-size="12">public</text>'
+        '<text class="sans muted" x="32" y="88" font-size="17">Take notes without breaking focus.</text>'
+        '<text class="sans muted" x="32" y="112" font-size="17">Selected text, screen areas &amp; quick notes → Markdown.</text>'
+        + bar_parts
+        + f'<rect class="select-box" x="{select_x}" y="{select_y}" width="{select_w}" height="{select_h}" rx="6"/>'
+        '<path d="M 258 194 L 266 200 L 258 206" fill="none" stroke="var(--muted)" stroke-width="1.5" '
+        'stroke-linecap="round" stroke-linejoin="round"/>'
+        '<rect class="panel" x="300.5" y="140.5" width="267" height="119" rx="10"/>'
+        '<text class="mono muted note-line" x="316" y="162" font-size="12" style="animation-delay:.5s">inbox.md</text>'
+        '<text class="mono text note-line" x="316" y="190" font-size="12" style="animation-delay:1s">- selected quote</text>'
+        '<text class="mono text note-line" x="316" y="212" font-size="12" style="animation-delay:1.5s">- OCR → text</text>'
+        '<text class="mono teal note-line" x="316" y="234" font-size="12" style="animation-delay:2s">#reading</text>'
+        + '<text class="mono muted" x="32" y="280" font-size="13">Swift · C#/WPF · on-device OCR · macOS + Windows</text>'
+        + "</g>"
+    )
+    return svg_doc("focusnotes project card", 600, 300, theme, "", "".join(css), body)
+
+
+def flatcart_card(theme: dict[str, str]) -> str:
+    css = [
+        "@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}",
+        ".entrance{animation:cardIn .65s cubic-bezier(.2,.8,.2,1) both}",
+        ".bar-fill{animation:fillBar 1.2s cubic-bezier(.2,.8,.2,1) both}",
+        "@keyframes fillBar{from{width:0px}to{width:var(--to)}}",
+        ".cheaper{animation:showTag .3s ease-out 1.5s both}",
+        "@keyframes showTag{from{opacity:0}to{opacity:1}}",
+        "@media(prefers-reduced-motion:reduce){.entrance,.bar-fill,.cheaper{animation:none!important}}",
+    ]
+    # Both bars share one 360px scale so the price gap reads at its true proportion.
+    body = (
+        '<g class="entrance">'
+        '<rect class="panel" x="0.6" y="0.6" width="598.8" height="298.8" rx="16"/>'
+        '<text class="sans text" x="32" y="52" font-size="28" font-weight="700">flatcart</text>'
+        '<rect x="474" y="28" width="94" height="25" rx="12.5" fill="none" stroke="var(--accent)" stroke-width="1.2"/>'
+        '<path d="M 488 39 V 37 A 4 4 0 0 1 496 37 V 39 M 487 39 H 497 V 47 H 487 Z" '
+        'fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>'
+        '<text class="mono accent" x="531" y="45" text-anchor="middle" font-size="12">private</text>'
+        '<text class="sans muted" x="32" y="88" font-size="17">One grocery order for the whole flat.</text>'
+        '<text class="sans muted" x="32" y="112" font-size="17">Shared list, compare carts, split the bill.</text>'
+        '<text class="mono muted" x="32" y="174" font-size="12">Instamart</text>'
+        '<text class="mono text" x="392" y="174" text-anchor="end" font-size="13">₹1,284</text>'
+        '<rect x="32" y="182" width="360" height="8" rx="4" fill="var(--faint)"/>'
+        '<rect class="bar-fill violet" x="32" y="182" width="360" height="8" rx="4" style="--to:360px"/>'
+        '<text class="mono muted" x="32" y="222" font-size="12">Zepto</text>'
+        '<text class="mono text" x="392" y="222" text-anchor="end" font-size="13">₹1,197</text>'
+        '<rect x="32" y="230" width="360" height="8" rx="4" fill="var(--faint)"/>'
+        '<rect class="bar-fill teal" x="32" y="230" width="336" height="8" rx="4" '
+        'style="--to:336px;animation-delay:.15s"/>'
+        '<g class="cheaper"><rect x="78" y="209" width="58" height="18" rx="9" fill="none" stroke="var(--teal)" stroke-width="1.2"/>'
+        '<text class="mono teal" x="107" y="222" text-anchor="middle" font-size="11">cheaper</text></g>'
+        '<text class="mono muted" x="420" y="180" font-size="13">÷ 4</text>'
+        '<text class="mono text" x="420" y="214" font-size="24">₹299 each</text>'
+        '<text class="mono muted" x="420" y="236" font-size="12">split</text>'
+        '<text class="mono muted" x="32" y="280" font-size="13">TypeScript · Cloudflare Workers · Durable Objects</text>'
+        "</g>"
+    )
+    return svg_doc("flatcart project card", 600, 300, theme, "", "".join(css), body)
+
+
 def impact_strip(theme: dict[str, str]) -> str:
     tiles = [
         ("70%+", "faster ticket resolution", "enterprise RAG", 94),
@@ -383,6 +466,8 @@ def write(name: str, value: str) -> None:
 def main() -> None:
     builders = {
         "banner": banner,
+        "card-focusnotes": focusnotes_card,
+        "card-flatcart": flatcart_card,
         "card-dashboard": dashboard_card,
         "card-quorum": quorum_card,
         "impact": impact_strip,
